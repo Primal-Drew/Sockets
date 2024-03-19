@@ -23,13 +23,15 @@ int main()
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;
+    hints.ai_flags = AI_PASSIVE;// AI_PASSIVE is the IP of your local host.
 
+    // getaddrinfo returns a non-zero value when an error is encountered.
     if ((status=getaddrinfo(NULL,"3490", &hints,&servinfo))!=0)
     {
         fprintf(stderr,"getaddrinfo error: %s\n",gai_strerror(status));
         exit(1);
     }
 
+    // @servinfo is a linked list thus must be freed.
     freeaddrinfo(servinfo);
 }

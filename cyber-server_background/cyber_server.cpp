@@ -23,12 +23,12 @@ void sigchld_handler(int s)
     }
 }
 
-void *get_in_addr(struct sockaddr_in *sa)
+void *get_in_addr(struct sockaddr *sa)
 {
     if (sa->sa_family == AF_INET)
-        return &(((struct sockaddr *)(sa))->sin_addr);
+        return &(((struct sockaddr_in*)(sa))->sin_addr);
 
-    return &(((struct sockaddr_in6 *)(sa))->sin6_addr);
+    return &(((struct sockaddr_in6*)(sa))->sin6_addr);
 }
 
 int main(void)
@@ -37,15 +37,16 @@ int main(void)
     struct addrinfo hints, *servinfo, *p;
     struct sockaddr_storage their_addr;
     socklen_t sin_size;
+    struct sigaction sa;
     int yes = 1;
     char s[INET6_ADDRSTRLEN];
 
     int rv;
 
     memset(&hints, 0, sizeof(hints));
-    hints->ai_family = AF_UNSPEC;
-    hints->ai_flag = AI_PASSIVE;
-    hints->ai_socktype = SOCK_STREAM;
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_flags = AI_PASSIVE;
+    hints.ai_socktype = SOCK_STREAM;
 
     if ((rv = getaddrinfo(NULL, PORT, &hints, &servinfo)) != 0)
     {
